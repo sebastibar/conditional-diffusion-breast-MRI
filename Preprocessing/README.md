@@ -3,7 +3,6 @@
 This folder contains scripts to prepare the [MAMA-MIA](https://doi.org/10.1038/s41597-025-04707-4) breast MRI dataset for training the conditional diffusion models described in our work.  
 The preprocessing includes downloading selected patient data, extracting relevant contrast phases, and slicing the volumes into tumor and non-tumor 2D images.
 
----
 
 ## 📂 Contents
 
@@ -29,12 +28,51 @@ The preprocessing includes downloading selected patient data, extracting relevan
   - Slice index
   - Tumor presence (1 or 0)
 
----
 
 ## ⚙️ Usage
 
 ### 1. Download the dataset
 
-```bash
-python mamamia_dataset.py
+- **`mamamia_dataset.py`**  
+
+Requirements:
+- A valid Synapse account and access to the MAMA-MIA dataset
+- Set your Synapse personal access token in mamamia_dataset.py
+
+This will create:
+
+MAMA-MIA/
+├── images/
+│   ├── precontrast/
+│   └── postcontrast/
+├── segmentations_expert/
+└── metadata/
+
+### 2. Slice and preprocess images
+
+python slicing_preprocessing.py
+
+bilateral_slices/
+├── train/
+│   ├── precontrast/
+│   └── postcontrast/
+├── test/
+│   ├── precontrast/
+│   └── postcontrast/
+
+unilateral_slices/
+├── train/
+│   ├── precontrast/
+│   └── postcontrast/
+├── test/
+│   ├── precontrast/
+│   └── postcontrast/
+
+metadata/tumor_slices.csv
+
+📝 Notes
+- The preprocessing assumes data is in axial orientation and matches the MAMA-MIA naming convention.
+- Only patients with expert segmentations are processed.
+- The proportion of non-tumor slices can be adjusted in slicing_preprocessing.py (0.2 = 20%).
+- All output images are normalized per slice and saved as 8-bit PNG.
 
