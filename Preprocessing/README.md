@@ -42,10 +42,15 @@ Requirements:
 This will create:
 
 MAMA-MIA/
+
 ├── images/
+
 │   ├── precontrast/
+
 │   └── postcontrast/
+
 ├── segmentations_expert/
+
 └── metadata/
 
 
@@ -54,6 +59,7 @@ MAMA-MIA/
 python slicing_preprocessing.py
 
 bilateral_slices/
+
 ├── train/
 
 │   ├── precontrast/
@@ -61,7 +67,9 @@ bilateral_slices/
 │   └── postcontrast/
 
 └── test/
+
     ├── precontrast/
+    
     └── postcontrast/
 
 
@@ -74,10 +82,13 @@ unilateral_slices/
 │   └── postcontrast/
 
 └── test/
+
     ├── precontrast/
+    
     └── postcontrast/
 
 metadata/
+
 └── tumor_slices.csv
 
 📝 Notes
