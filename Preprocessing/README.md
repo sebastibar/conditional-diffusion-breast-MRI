@@ -48,6 +48,7 @@ MAMA-MIA/
 ├── segmentations_expert/
 └── metadata/
 
+
 ### 2. Slice and preprocess images
 
 python slicing_preprocessing.py
@@ -56,19 +57,20 @@ bilateral_slices/
 ├── train/
 │   ├── precontrast/
 │   └── postcontrast/
-├── test/
-│   ├── precontrast/
-│   └── postcontrast/
+└── test/
+    ├── precontrast/
+    └── postcontrast/
 
 unilateral_slices/
 ├── train/
 │   ├── precontrast/
 │   └── postcontrast/
-├── test/
-│   ├── precontrast/
-│   └── postcontrast/
+└── test/
+    ├── precontrast/
+    └── postcontrast/
 
-metadata/tumor_slices.csv
+metadata/
+└── tumor_slices.csv
 
 📝 Notes
 - The preprocessing assumes data is in axial orientation and matches the MAMA-MIA naming convention.
