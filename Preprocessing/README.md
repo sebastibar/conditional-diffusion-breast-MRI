@@ -55,16 +55,24 @@ python slicing_preprocessing.py
 
 bilateral_slices/
 ├── train/
+
 │   ├── precontrast/
+
 │   └── postcontrast/
+
 └── test/
     ├── precontrast/
     └── postcontrast/
 
+
 unilateral_slices/
+
 ├── train/
+
 │   ├── precontrast/
+
 │   └── postcontrast/
+
 └── test/
     ├── precontrast/
     └── postcontrast/
