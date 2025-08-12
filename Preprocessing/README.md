@@ -67,9 +67,7 @@ bilateral_slices/
 │   └── postcontrast/
 
 └── test/
-
     ├── precontrast/
-    
     └── postcontrast/
 
 
@@ -82,9 +80,7 @@ unilateral_slices/
 │   └── postcontrast/
 
 └── test/
-
     ├── precontrast/
-    
     └── postcontrast/
 
 metadata/
