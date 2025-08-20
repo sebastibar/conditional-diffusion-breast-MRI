@@ -66,18 +66,28 @@ These data loaders are imported by the training scripts in the root `training/` 
 ## Expected Data Structure
 
 The loaders expect your preprocessed data to be organized in the following structure. Corresponding slices across folders **must have identical filenames**.
+
 bilateral_slices/
 ├── train/
 │ ├── precontrast/
 │ │ ├── patient1_slice0.png
+│ │ ├── patient1_slice1.png
 │ │ └── ...
-│ ├── postcontrast/ # (For both loaders)
+│ ├── postcontrast/ # Used by both data_loading.py and masked_data_loading.py
 │ │ ├── patient1_slice0.png
+│ │ ├── patient1_slice1.png
 │ │ └── ...
-│ └── masks/ # (For masked_data_loading.py only)
+│ └── masks/ # Used exclusively by masked_data_loading.py
 │ ├── patient1_slice0.png
+│ ├── patient1_slice1.png
 │ └── ...
 └── test/
 ├── precontrast/
+│ ├── patient2_slice0.png
+│ └── ...
 ├── postcontrast/
+│ ├── patient2_slice0.png
+│ └── ...
 └── masks/
+├── patient2_slice0.png
+└── ...
