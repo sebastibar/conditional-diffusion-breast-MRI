@@ -67,61 +67,17 @@ These data loaders are imported by the training scripts in the root `training/` 
 
 The loaders expect your preprocessed data to be organized in the following structure. Corresponding slices across folders **must have identical filenames**.
 
-bilateral_slices/
-│
-├── train/
-│ │
-│ ├── precontrast/
-│ │ ├── patient1_slice0.png
-│ │ ├── patient1_slice1.png
-│ │ └── ...
-│ │
-│ ├── postcontrast/ # Used by both data_loading.py and masked_data_loading.py
-│ │ ├── patient1_slice0.png
-│ │ ├── patient1_slice1.png
-│ │ └── ...
-│ │
-│ └── masks/ # Used exclusively by masked_data_loading.py
-│ ├── patient1_slice0.png
-│ ├── patient1_slice1.png
-│ └── ...
-│
-└── test/
-│
-├── precontrast/
-│ ├── patient2_slice0.png
-│ └── ...
-│
-├── postcontrast/
-│ ├── patient2_slice0.png
-│ └── ...
-│
-└── masks/
-├── patient2_slice0.png
-└── ...
 
-unilateral_slices/
-│
-├── train/
-│ │
-│ ├── precontrast/
-│ │ ├── patientA_slice0.png
-│ │ └── ...
-│ │
-│ └── postcontrast/
-│ ├── patientA_slice0.png
-│ └── ...
-│
-└── test/
-│
-├── precontrast/
-│ ├── patientB_slice0.png
-│ └── ...
-│
-└── postcontrast/
-├── patientB_slice0.png
-└── ...
+-   **`bilateral_slices/`** (For full-breast models)
+    -   `train/` & `test/` splits
+        -   `precontrast/`: Pre-contrast input images (e.g., `patient1_slice0.png`)
+        -   `postcontrast/`: Target post-contrast images
+        -   `masks/`: Tumor segmentation masks (for ROI-aware models)
+-   **`unilateral_slices/`** (For single-breast models)
+    -   `train/` & `test/` splits
+        -   `precontrast/`: Pre-contrast input images
+        -   `postcontrast/`: Target post-contrast images
+-   **`metadata/`**
+    -   `tumor_slices.csv`: CSV file mapping filenames to tumor labels.
 
-metadata/
-│
-└── tumor_slices.csv
+**The Golden Rule:** For any given slice (e.g., `patient1_slice0.png`), an identically named file **must** exist in the corresponding `precontrast`, `postcontrast`, and (if used) `masks` folders. This is how the data loader pairs them correctly.
