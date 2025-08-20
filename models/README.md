@@ -30,7 +30,7 @@ This module defines the primary U-Net architecture used as the denoiser in the D
 
 ### 2. `masked_conditional_unet.py`
 
-**Note:** This file appears to be functionally identical to `conditional_unet.py` based on the provided code snippet. In a practical implementation, this would be the version designed to accept an *additional input channel* for a tumor segmentation mask.
+**Note:** This file appears to be functionally similar to `conditional_unet.py` based on the code. In a practical implementation, this would be the version designed to accept an *additional input channel* for a tumor segmentation mask.
 
 **Intended Purpose:** This model would be used for **ROI-mask conditioned** variants (e.g., `PC-ROI_(M)`). The input would be a 3-channel tensor: `[noisy_image, pre_contrast_condition, tumor_mask]`, allowing the model to explicitly focus its learning and generation on the anatomically relevant regions.
 
