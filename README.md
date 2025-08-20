@@ -154,22 +154,22 @@ Uses ReLU-masked residuals: MAE([pred - pre]+, [target - pre]+)
 
 Training Commands
 
-# Vanilla post-contrast model
+### Vanilla post-contrast model
 python train.py --model_type post_contrast --data_dir data/processed --output_dir results/pc_vanilla
 
-# Vanilla subtraction model  
+### Vanilla subtraction model  
 python train.py --model_type subtraction --data_dir data/processed --output_dir results/sub_vanilla
 
-# With ROI-aware loss
+### With ROI-aware loss
 python train.py --model_type subtraction --use_roi_loss --data_dir data/processed --output_dir results/sub_roi_loss
 
-# With mask conditioning
+### With mask conditioning
 python train.py --model_type post_contrast --use_mask_conditioning --data_dir data/processed --output_dir results/pc_mask_cond
 
-# Full breast training
+### Full breast training
 python train.py --data_dir data/processed --breast_type full --output_dir results/full_breast
 
-# Single breast training
+### Single breast training
 python train.py --data_dir data/processed --breast_type single --output_dir results/single_breast
 
 Training Configuration:
@@ -187,3 +187,32 @@ Validation set evaluation every epoch
 EMA model checkpointing
 
 Synthetic sample generation during training for qualitative monitoring
+
+## 📊 Evaluation
+
+### Quantitative Metrics
+
+We evaluate synthetic image quality using six complementary metrics:
+
+- **MAE (↓)**: Mean Absolute Error - pixel-level accuracy
+- **SSIM (↑)**: Structural Similarity Index - structural preservation  
+- **PSNR (↑)**: Peak Signal-to-Noise Ratio - signal fidelity
+- **LPIPS (↓)**: Learned Perceptual Image Patch Similarity - perceptual quality
+- **FID (↓)**: Fréchet Inception Distance - distribution similarity
+- **FRD (↓)**: Fréchet Radiomics Distance - radiomic feature distribution
+
+### Evaluation Scripts
+
+```bash
+# Evaluate all models on test set
+python evaluate.py --test_dir data/splits/test.csv --model_dir results/ --output_dir evaluations/
+
+# Evaluate specific model
+python evaluate.py --test_dir data/splits/test.csv --model_path results/subtraction_vanilla/model.pt --output_dir evaluations/sub_vanilla
+
+# Compute metrics for ROI regions only
+python evaluate.py --test_dir data/splits/test.csv --model_path results/subtraction_roi/model.pt --roi_only --output_dir evaluations/sub_roi_roi
+
+# Generate qualitative samples
+python generate_samples.py --test_samples 50 --model_path results/subtraction_vanilla/model.pt --output_dir samples/sub_vanilla
+```
