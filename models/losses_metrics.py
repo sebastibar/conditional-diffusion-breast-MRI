@@ -19,6 +19,11 @@ class PerceptualLoss(nn.Module):
         target_features = self.vgg(target.repeat(1, 3, 1, 1))
         return self.criterion(pred_features, target_features)
 
+    # --- NEW METHOD ADDED FOR ROI TRAINING ---
+    def extract_features(self, x):
+        """Extract VGG features without calculating loss. Used for ROI-aware losses."""
+        return self.vgg(x.repeat(1, 3, 1, 1))
+
 
 def total_variation_loss(x):
     diff_h = torch.abs(x[:, :, :, :-1] - x[:, :, :, 1:])
@@ -32,8 +37,8 @@ def clamp_and_safe_pred(x):
 
 # === METRICS (for training) ===
 
-mse_metric = MeanSquaredError().to("cuda")
-mae_metric = MeanAbsoluteError().to("cuda")
+mse_metric = MeanSquaredError()
+mae_metric = MeanAbsoluteError()
 
 def evaluate_batch(recon, target):
     with torch.no_grad():
