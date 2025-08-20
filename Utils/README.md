@@ -80,4 +80,4 @@ The loaders expect your preprocessed data to be organized in the following struc
 -   **`metadata/`**
     -   `tumor_slices.csv`: CSV file mapping filenames to tumor labels.
 
-**The Golden Rule:** For any given slice (e.g., `patient1_slice0.png`), an identically named file **must** exist in the corresponding `precontrast`, `postcontrast`, and (if used) `masks` folders. This is how the data loader pairs them correctly.
+**Important:** For any given slice (e.g., `patient1_slice0.png`), an identically named file **must** exist in the corresponding `precontrast`, `postcontrast`, and (if used) `masks` folders. This is how the data loader pairs them correctly.
