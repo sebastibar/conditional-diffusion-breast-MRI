@@ -31,7 +31,8 @@ This directory contains scripts for generating synthetic images using trained mo
     -   Generated images in `generated_images/`
     -   Sample comparison visualizations (`sample_comparisons.png`)
     -   Detailed metrics in CSV format (`inference_metrics.csv`)
-    -   Summary statistics and distribution plots
+    -   Distribution metrics (`distribution_metrics.csv`)
+    -   FID comparison plots (`fid_comparison.png`)
 
 ## ⚙️ Configuration
 
@@ -46,19 +47,40 @@ Each script has a `config` dictionary at the top that controls:
 
 ## 📊 Output Metrics
 
-All inference scripts calculate and save the following metrics:
+### Sample-Level Metrics
+All inference scripts calculate and save the following per-image metrics:
 -   **MAE**: Mean Absolute Error
 -   **SSIM**: Structural Similarity Index Measure
 -   **PSNR**: Peak Signal-to-Noise Ratio
 -   **LPIPS**: Learned Perceptual Image Patch Similarity
 
-## 🔧 Core Module
+### Distribution-Level Metrics
+All scripts now automatically compute:
+-   **FID**: Fréchet Inception Distance between real and generated distributions
+-   **Baseline Comparisons**: FID between post-contrast vs pre-contrast and subtraction vs pre-contrast
 
-The `core_inference.py` module contains shared functionality:
--   `get_masked_dataloaders_for_inference()`: Loads test data with masks.
--   `run_inference()`: Main function that runs the diffusion sampling process.
--   `save_results()`: Saves generated images, metrics, and visualizations.
--   `create_summary_plots()`: Creates violin plots and summary statistics.
+## 🧪 Standalone Tools
+
+### FID Calculation
+```bash
+# Compute FID between two directories
+python inference/compute_fid.py --real_dir path/to/real --fake_dir path/to/generated
+
+# Compute baseline FIDs for breast MRI
+python inference/compute_fid.py --real_dir bilateral_slices/test/precontrast --fake_dir bilateral_slices/test/postcontrast --baseline
+
+## 🔧 Core Modules
+
+- **`core_inference.py`**: Main inference pipeline with sampling, metrics calculation, and visualization
+- **`distribution_metrics.py`**: FID, FRD, and other distribution-level metrics calculation
+- **`compute_fid.py`**: Standalone FID calculation tool for quick comparisons
+
+### Key Functions
+
+- **`run_inference()`**: Main function that runs the diffusion sampling process
+- **`compute_distribution_metrics()`**: Calculates FID and other distribution metrics between real and generated data
+- **`save_results()`**: Saves generated images, metrics, and visualizations
+- **`get_masked_dataloaders_for_inference()`**: Loads test data with masks for evaluation
 
 ## 📝 Usage Example
 
