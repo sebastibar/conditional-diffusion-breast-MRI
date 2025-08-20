@@ -1,4 +1,7 @@
-# === MODEL ===
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 class SelfAttention(nn.Module):
     def __init__(self, in_channels):
         super().__init__()
@@ -9,16 +12,13 @@ class SelfAttention(nn.Module):
 
     def forward(self, x):
         B, C, H, W = x.shape
-        q = self.query(x).view(B, -1, H * W).permute(0, 2, 1)  # [B, HW, C//8]
-        k = self.key(x).view(B, -1, H * W)                     # [B, C//8, HW]
-        v = self.value(x).view(B, -1, H * W)                   # [B, C, HW]
-
-        attn = F.softmax(torch.bmm(q, k), dim=-1)              # [B, HW, HW]
-        out = torch.bmm(v, attn.permute(0, 2, 1))              # [B, C, HW]
+        q = self.query(x).view(B, -1, H * W).permute(0, 2, 1)
+        k = self.key(x).view(B, -1, H * W)
+        v = self.value(x).view(B, -1, H * W)
+        attn = F.softmax(torch.bmm(q, k), dim=-1)
+        out = torch.bmm(v, attn.permute(0, 2, 1))
         out = out.view(B, C, H, W)
-
         return self.gamma * out + x
-
 
 class ResidualConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, dropout=0.1):
@@ -41,17 +41,16 @@ class ResidualConvBlock(nn.Module):
         x = self.dropout2(x)
         return F.relu(x + identity)
 
-
-class ConditionalUNet(nn.Module):
-    def __init__(self, in_channels=2, out_channels=1, base_channels=64, dropout=0.1):
+# This is the same class as conditional_unet.py, but its purpose is clear from the filename.
+# It is intended to be used with in_channels=3 for mask conditioning.
+class MaskConditionedUNet(nn.Module):
+    def __init__(self, in_channels=3, out_channels=1, base_channels=64, dropout=0.1):
         super().__init__()
-
         self.enc1 = ResidualConvBlock(in_channels, base_channels, dropout)
         self.enc2 = ResidualConvBlock(base_channels, base_channels * 2, dropout)
         self.enc3 = ResidualConvBlock(base_channels * 2, base_channels * 4, dropout)
 
         self.pool = nn.MaxPool2d(2)
-
         self.bottleneck = ResidualConvBlock(base_channels * 4, base_channels * 8, dropout)
         self.attn = SelfAttention(base_channels * 8)
 
