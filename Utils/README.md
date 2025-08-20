@@ -70,47 +70,58 @@ The loaders expect your preprocessed data to be organized in the following struc
 bilateral_slices/
 │
 ├── train/
-│   │
-│   ├── precontrast/
-│   │   │
-│   │   ├── patient1_slice0.png
-│   │   │
-│   │   ├── patient1_slice1.png
-│   │   │
-│   │   └── ...
-│   │
-│   ├── postcontrast/    # Used by both data_loading.py and masked_data_loading.py
-│   │   │
-│   │   ├── patient1_slice0.png
-│   │   │
-│   │   ├── patient1_slice1.png
-│   │   │
-│   │   └── ...
-│   │
-│   └── masks/           # Used exclusively by masked_data_loading.py
-│       │
-│       ├── patient1_slice0.png
-│       │
-│       ├── patient1_slice1.png
-│       │
-│       └── ...
+│ │
+│ ├── precontrast/
+│ │ ├── patient1_slice0.png
+│ │ ├── patient1_slice1.png
+│ │ └── ...
+│ │
+│ ├── postcontrast/ # Used by both data_loading.py and masked_data_loading.py
+│ │ ├── patient1_slice0.png
+│ │ ├── patient1_slice1.png
+│ │ └── ...
+│ │
+│ └── masks/ # Used exclusively by masked_data_loading.py
+│ ├── patient1_slice0.png
+│ ├── patient1_slice1.png
+│ └── ...
 │
 └── test/
-    │
-    ├── precontrast/
-    │   │
-    │   ├── patient2_slice0.png
-    │   │
-    │   └── ...
-    │
-    ├── postcontrast/
-    │   │
-    │   ├── patient2_slice0.png
-    │   │
-    │   └── ...
-    │
-    └── masks/
-        │
-        ├── patient2_slice0.png
-        │
-        └── ...
+│
+├── precontrast/
+│ ├── patient2_slice0.png
+│ └── ...
+│
+├── postcontrast/
+│ ├── patient2_slice0.png
+│ └── ...
+│
+└── masks/
+├── patient2_slice0.png
+└── ...
+
+unilateral_slices/
+│
+├── train/
+│ │
+│ ├── precontrast/
+│ │ ├── patientA_slice0.png
+│ │ └── ...
+│ │
+│ └── postcontrast/
+│ ├── patientA_slice0.png
+│ └── ...
+│
+└── test/
+│
+├── precontrast/
+│ ├── patientB_slice0.png
+│ └── ...
+│
+└── postcontrast/
+├── patientB_slice0.png
+└── ...
+
+metadata/
+│
+└── tumor_slices.csv
