@@ -13,6 +13,8 @@ from skimage.metrics import peak_signal_noise_ratio as psnr
 import lpips
 from torchmetrics.functional import structural_similarity_index_measure as ssim_torch
 from torchmetrics.functional import peak_signal_noise_ratio as psnr_torch
+from .distribution_metrics import evaluate_distribution_metrics, compute_baseline_fids
+
 
 def get_masked_dataloaders_for_inference(pre_folder, post_folder, mask_folder, img_size=256, batch_size=1):
     """A simplified version to load data for inference."""
@@ -256,3 +258,98 @@ def create_summary_plots(metrics_df, output_dir):
     print(summary)
     
     summary.to_csv(os.path.join(output_dir, "metrics_summary.csv"))
+
+def compute_distribution_metrics(real_results, generated_results, output_dir, config, device='cuda'):
+    """
+    Compute distribution-level metrics (FID, FRD) for the entire dataset.
+    
+    Args:
+        real_results: List of results from real data (from run_inference)
+        generated_results: List of results from generated data
+        output_dir: Directory to save results
+        config: Configuration dictionary
+        device: Device to use for computation
+        
+    Returns:
+        Dictionary with distribution metrics
+    """
+    # Convert tensors back to PIL Images for FID calculation
+    real_images = []
+    generated_images = []
+    
+    for real_res, gen_res in zip(real_results, generated_results):
+        # Convert tensors to PIL Images
+        real_img = tensor_to_pil(real_res['ground_truth'])
+        gen_img = tensor_to_pil(gen_res['generated'])
+        
+        real_images.append(real_img)
+        generated_images.append(gen_img)
+    
+    # Compute distribution metrics
+    dist_metrics = evaluate_distribution_metrics(
+        real_images, 
+        generated_images, 
+        device=device
+    )
+    
+    # Save distribution metrics
+    dist_df = pd.DataFrame([dist_metrics])
+    dist_df.to_csv(os.path.join(output_dir, "distribution_metrics.csv"), index=False)
+    
+    # Compute baselines for reference
+    baselines = compute_baseline_fids(
+        config["pre_folder"],
+        config["post_folder"],
+        device=device
+    )
+    
+    # Add baselines to results
+    dist_metrics['Baseline_Post_vs_Pre'] = baselines['Post_vs_Pre']
+    dist_metrics['Baseline_Subtraction_vs_Pre'] = baselines['Subtraction_vs_Pre']
+    
+    # Create comparison plot
+    create_distribution_comparison_plot(dist_metrics, output_dir)
+    
+    return dist_metrics
+
+def tensor_to_pil(tensor):
+    """Convert a tensor back to PIL Image."""
+    import torch
+    from PIL import Image
+    
+    # Convert from [-1, 1] to [0, 1]
+    img_np = (tensor.squeeze().numpy() + 1) / 2.0
+    # Convert to [0, 255] and uint8
+    img_np = (img_np * 255).astype(np.uint8)
+    
+    if len(img_np.shape) == 2:  # Grayscale
+        return Image.fromarray(img_np, mode='L')
+    else:  # RGB
+        return Image.fromarray(img_np, mode='RGB')
+
+def create_distribution_comparison_plot(metrics, output_dir):
+    """Create a bar plot comparing distribution metrics."""
+    import matplotlib.pyplot as plt
+    
+    # Extract metrics for plotting
+    fid_values = {
+        'Generated vs Real': metrics['FID'],
+        'Baseline: Post vs Pre': metrics.get('Baseline_Post_vs_Pre', 0),
+        'Baseline: Subtraction vs Pre': metrics.get('Baseline_Subtraction_vs_Pre', 0)
+    }
+    
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(range(len(fid_values)), list(fid_values.values()), 
+                   color=['skyblue', 'lightcoral', 'lightgreen'])
+    
+    plt.title('FID Comparison', fontsize=14)
+    plt.ylabel('FID Score', fontsize=12)
+    plt.xticks(range(len(fid_values)), list(fid_values.keys()), rotation=45, ha='right')
+    
+    # Add values on top of bars
+    for i, (name, value) in enumerate(fid_values.items()):
+        plt.text(i, value + 5, f'{value:.1f}', ha='center', va='bottom')
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, "fid_comparison.png"), dpi=300, bbox_inches='tight')
+    plt.close()
