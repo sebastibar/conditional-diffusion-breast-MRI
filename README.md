@@ -216,3 +216,79 @@ python evaluate.py --test_dir data/splits/test.csv --model_path results/subtract
 # Generate qualitative samples
 python generate_samples.py --test_samples 50 --model_path results/subtraction_vanilla/model.pt --output_dir samples/sub_vanilla
 ```
+### Reader Study Design
+
+**Participants**: 6 domain experts
+- 2 radiologists (11+ and 9+ years experience)
+- 4 MRI technologists (10-15+ years experience)
+
+**Three-Part Visual Assessment**:
+
+**Task 1 - Discrimination**:
+```python
+# 15 mixed images presented individually
+task1_images = {
+    'synthetic': 10,  # 10 synthetic images
+    'real': 5         # 5 real images
+}
+# Assessment: Distinguish real vs synthetic
+```
+
+**Task 2 - Comparison**:
+```python
+# Randomly selected triplets per case
+task2_triplets = {
+    'pre_contrast': 1,      # Pre-contrast reference
+    'real_post': 1,         # Real post-contrast
+    'synthetic_post': 1     # Synthetic post-contrast
+}
+# Assessment: Identify real image between two post-contrast options
+```
+
+**Task 3 - Annotation**:
+```python
+# Labeled triplets (known real/synthetic)
+task3_annotation = {
+    'differences': 'annotate visual differences',
+    'realism_score': 'score 1-10 scale',
+    'diagnostic_relevance': 'qualitative assessment'
+}
+# Semi-structured follow-up discussion for clinical insights
+```
+
+**Evaluation Protocol**:
+```python
+# Study Setup
+study_design = {
+    'participants': {
+        'radiologists': 2,
+        'mri_technologists': 4,
+        'experience_range': '9-15+ years'
+    },
+    'tasks': {
+        'task_1': {
+            'name': 'Discrimination',
+            'images': '15 mixed (10 synthetic, 5 real)',
+            'instruction': 'Assess distinguishability real vs synthetic'
+        },
+        'task_2': {
+            'name': 'Comparative',
+            'images': 'Triplets (pre-contrast, real post, synthetic post)',
+            'instruction': 'Identify real image between two post-contrast options'
+        },
+        'task_3': {
+            'name': 'Annotation',
+            'images': 'Labeled triplets',
+            'instruction': 'Annotate differences and score realism 1-10'
+        }
+    },
+    'conditions': {
+        'blinding': 'Full',
+        'randomization': 'Image presentation order',
+        'scoring': 'Standardized sheets',
+        'session_duration': '30-45 minutes per reader',
+        'feedback': 'Semi-structured debriefing'
+    }
+}
+```
+
