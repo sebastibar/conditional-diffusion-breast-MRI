@@ -216,79 +216,100 @@ python evaluate.py --test_dir data/splits/test.csv --model_path results/subtract
 # Generate qualitative samples
 python generate_samples.py --test_samples 50 --model_path results/subtraction_vanilla/model.pt --output_dir samples/sub_vanilla
 ```
-### Reader Study Design
+# Reader Study Design
 
-**Participants**: 6 domain experts
-- 2 radiologists (11+ and 9+ years experience)
-- 4 MRI technologists (10-15+ years experience)
+**Participants:** 6 domain experts (2 radiologists + 4 MRI technologists)
 
-**Three-Part Visual Assessment**:
+---
 
-**Task 1 - Discrimination**:
-```python
-# 15 mixed images presented individually
-task1_images = {
-    'synthetic': 10,  # 10 synthetic images
-    'real': 5         # 5 real images
+## Task 1 - Discrimination
+- **Setup:** 15 mixed images (10 synthetic, 5 real)  
+- **Goal:** Assess distinguishability between real and synthetic
+
+## Task 2 - Comparative
+- **Setup:** Random triplets *(pre-contrast, real post, synthetic post)*  
+- **Goal:** Identify real image between two post-contrast options
+
+## Task 3 - Annotation
+- **Setup:** Annotate differences in labeled triplets  
+- **Goal:** Score realism on scale of 1–10
+
+---
+
+# 🎯 Results
+
+## Key Findings
+- Subtraction-based models consistently outperform post-contrast models across all metrics  
+- ROI-aware training significantly improves tumor fidelity **without requiring masks at inference**  
+- Full-breast models generalize better than single-breast counterparts  
+- Mask conditioning provides best qualitative results when tumor location is known  
+- Synthetic images show high anatomical realism, especially in subtraction-based and ROI-conditioned models  
+
+---
+
+## Quantitative Results
+
+### Full-Breast Synthesis
+
+| Model        | MAE (↓)       | SSIM (↑)       | PSNR (↑)       | LPIPS (↓)      | FID (↓) | FRD (↓) |
+|--------------|---------------|----------------|----------------|----------------|---------|---------|
+| SUB_(Vanilla) | 0.054 ± 0.021 | 0.847 ± 0.061 | 25.63 ± 3.35  | 0.194 ± 0.037 | 69.75   | 28.99   |
+| SUB-ROI_(L)   | 0.247 ± 0.107 | 0.374 ± 0.210 | 16.84 ± 3.42  | –              | –       | –       |
+
+---
+
+### Single-Breast Synthesis
+
+| Model        | MAE (↓)       | SSIM (↑)       | PSNR (↑)       |
+|--------------|---------------|----------------|----------------|
+| SUB_(Vanilla) | 0.092 ± 0.036 | 0.715 ± 0.095 | 22.52 ± 2.80  |
+| SUB-ROI_(L)   | 0.266 ± 0.125 | –              | 16.53 ± 3.44  |
+
+---
+
+## Qualitative Results
+
+![Qualitative Results](https://github.com/sebastibar/conditional-diffusion-breast-MRI/raw/main/assets/qualitative_results.png)
+
+**Visual Improvements with ROI Guidance:**
+- Enhanced boundary sharpness in tumor regions  
+- Better approximation of lesion intensity patterns  
+- Improved contrast uptake rendering  
+- Reduced artifacts in enhancement patterns  
+
+---
+
+## Reader Study Results
+
+**Task Performance:**
+- Task 1 (Discrimination): 60–80% accuracy across readers  
+- Task 2 (Comparative): Consistent selection of real post-contrast images  
+- Task 3 (Annotation): Realism scores 5–7/10 (average: **6.2**)  
+
+**Expert Feedback:**
+- **Strengths:** High anatomical fidelity in parenchyma and tissue structure, effective artifact simulation  
+- **Limitations:** Insufficient early-phase enhancement, flat background appearance, minor grid artifacts  
+- **Clinical Potential:** Treatment monitoring, response assessment, abbreviated protocols  
+
+
+---
+
+# 🧾 Citation
+
+If you use this code or dataset, please cite:
+
+```bibtex
+@article{ibarra2025comparing,
+  title={Comparing Conditional Diffusion Models for Synthesizing Contrast-Enhanced Breast MRI from Pre-Contrast Images},
+  author={Ibarra, Sebastian and del Riego, Javier and Catanese, Alessandro and Cuba, Julian and Cardona, Julian and Leon, Nataly and Infante, Jonathan and Lekadir, Karim and Diaz, Oliver and Osuala, Richard},
+  journal={arXiv preprint arXiv:2508.13776},
+  year={2025}
 }
-# Assessment: Distinguish real vs synthetic
 ```
 
-**Task 2 - Comparison**:
-```python
-# Randomly selected triplets per case
-task2_triplets = {
-    'pre_contrast': 1,      # Pre-contrast reference
-    'real_post': 1,         # Real post-contrast
-    'synthetic_post': 1     # Synthetic post-contrast
-}
-# Assessment: Identify real image between two post-contrast options
-```
+# 💬 Contact
+For questions or collaborations, please contact:  
 
-**Task 3 - Annotation**:
-```python
-# Labeled triplets (known real/synthetic)
-task3_annotation = {
-    'differences': 'annotate visual differences',
-    'realism_score': 'score 1-10 scale',
-    'diagnostic_relevance': 'qualitative assessment'
-}
-# Semi-structured follow-up discussion for clinical insights
-```
-
-**Evaluation Protocol**:
-```python
-# Study Setup
-study_design = {
-    'participants': {
-        'radiologists': 2,
-        'mri_technologists': 4,
-        'experience_range': '9-15+ years'
-    },
-    'tasks': {
-        'task_1': {
-            'name': 'Discrimination',
-            'images': '15 mixed (10 synthetic, 5 real)',
-            'instruction': 'Assess distinguishability real vs synthetic'
-        },
-        'task_2': {
-            'name': 'Comparative',
-            'images': 'Triplets (pre-contrast, real post, synthetic post)',
-            'instruction': 'Identify real image between two post-contrast options'
-        },
-        'task_3': {
-            'name': 'Annotation',
-            'images': 'Labeled triplets',
-            'instruction': 'Annotate differences and score realism 1-10'
-        }
-    },
-    'conditions': {
-        'blinding': 'Full',
-        'randomization': 'Image presentation order',
-        'scoring': 'Standardized sheets',
-        'session_duration': '30-45 minutes per reader',
-        'feedback': 'Semi-structured debriefing'
-    }
-}
-```
+📧 **Sebastian Ibarra** — [sebastian.ibarra@ub.edu](mailto:sebastian.ibarra@ub.edu)  
+📧 **Richard Osuala** — [richard.osuala@ub.edu](mailto:richard.osuala@ub.edu)  
 
